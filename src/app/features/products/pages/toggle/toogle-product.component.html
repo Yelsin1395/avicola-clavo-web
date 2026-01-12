@@ -1,0 +1,115 @@
+<app-layout-section>
+  <div class="overflow flex bg-base-200 rounded-box">
+    <div class="py-10 px-5">
+      <div class="text-left">
+        <h1 class="text-3xl font-bold">Crear productos</h1>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero bg-base-200 rounded-box mt-8 py-6">
+    <form [formGroup]="createProductForm" (ngSubmit)="submitForm()">
+      <fieldset
+        class="fieldset rounded-box border p-4 mb-3 w-2xs md:w-xl grid grid-cols-1 md:grid-cols-2 gap-2"
+      >
+        <legend class="fieldset-legend px-2">Información general</legend>
+
+        <fieldset class="fieldset col-span-2 md:col-span-1">
+          <label class="label">Nombre</label>
+          <input
+            class="input w-full"
+            type="text"
+            placeholder="Ingrese nombre"
+            formControlName="name"
+          />
+        </fieldset>
+
+        <fieldset class="fieldset col-span-2 md:col-span-1">
+          <label class="label">Tipo</label>
+          <select class="select" formControlName="type">
+            <option value="default" disabled selected>Seleccion tipo</option>
+            <option value="TANGIBLE">Físico</option>
+            <option value="INTANGIBLE">Servicio</option>
+          </select>
+        </fieldset>
+
+        <fieldset class="fieldset col-span-2">
+          <label class="label">Marca o proveedor</label>
+          <input
+            class="input w-full"
+            type="text"
+            placeholder="Ej: samsung, restaurante, organizadora "
+            list="browsers"
+            formControlName="brandOrProvider"
+          />
+          <datalist id="browsers">
+            <option value="Chrome"></option>
+            <option value="Firefox"></option>
+            <option value="Safari"></option>
+            <option value="Opera"></option>
+            <option value="Edge"></option>
+          </datalist>
+        </fieldset>
+
+        <fieldset class="fieldset col-span-2">
+          <label class="label">Descripción</label>
+          <textarea
+            class="textarea w-full"
+            placeholder="Ingrese descripción"
+            formControlName="description"
+          ></textarea>
+        </fieldset>
+      </fieldset>
+
+      <fieldset
+        class="fieldset rounded-box border p-4 mb-3 w-2xs md:w-xl grid grid-cols-1 md:grid-cols-2 gap-2"
+      >
+        <legend class="fieldset-legend px-2">Configuración de precios</legend>
+
+        <fieldset class="fieldset">
+          <label class="label">Precio base</label>
+          <input
+            class="input w-full"
+            type="number"
+            placeholder="Ingrese precio"
+            formControlName="basePrice"
+          />
+        </fieldset>
+
+        <fieldset class="fieldset">
+          <label class="label">Moneda</label>
+          <select class="select" formControlName="currencyCode">
+            <option value="default" disabled selected>Seleccion moneda</option>
+            <option value="PEN">PEN - S/</option>
+            <option value="USD">USD - $</option>
+          </select>
+        </fieldset>
+      </fieldset>
+
+      <fieldset
+        class="fieldset rounded-box border p-4 mb-3 w-2xs md:w-xl grid grid-cols-1 md:grid-cols-2 gap-2"
+      >
+        <legend class="fieldset-legend px-2">Multimedia</legend>
+
+        <fieldset class="fieldset col-span-2">
+          <label class="label">Url imágen</label>
+          <label class="input w-full">
+            <span class="label">https://</span>
+            <input type="text" placeholder="URL" />
+          </label>
+        </fieldset>
+      </fieldset>
+
+      <fieldset
+        class="fieldset rounded-box border p-4 mb-3 w-2xs md:w-xl grid grid-cols-1 md:grid-cols-2 gap-2"
+      >
+        <legend class="fieldset-legend px-2">Acciones</legend>
+
+        <div class="col-span-2 flex md:justify-center flex-col md:flex-row gap-2">
+          <button class="btn btn-primary btn-wide">Guardar</button>
+          <button class="btn btn-soft btn-wide text-red-500">Cancelar</button>
+        </div>
+      </fieldset>
+    </form>
+  </div>
+</app-layout-section>
