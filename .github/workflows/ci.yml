@@ -50,7 +50,7 @@ jobs:
           echo "📦 Packaging application into app.tar.gz..."
 
           mkdir -p dist-package
-          cp -r public src Dockerfile angular.json package.json pnpm-lock.yaml .postcssrc.json nginx.conf tsconfig*.json dist/ dist-package/
+          cp -r public src Dockerfile angular.json package.json pnpm-lock.yaml .postcssrc.json generate-proxy.config.js nginx.conf tsconfig*.json dist/ dist-package/
 
           tar -czf app.tar.gz -C dist-package .
 
