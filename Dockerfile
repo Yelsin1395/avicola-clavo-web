@@ -21,6 +21,24 @@ RUN pnpm build
 # Stage 2: Nginx para servir la aplicación
 FROM nginx:1.27-alpine
 
+# Build-time metadata (via --build-arg)
+ARG BUILD_DATE
+ARG VERSION
+ARG COMMIT_SHA
+ARG ENVIRONMENT
+ARG NODE_ENV
+ARG API_BASE_URL
+ARG API_VERSION
+
+# Export args as environment variables (runtime)
+ENV BUILD_DATE=${BUILD_DATE} \
+    VERSION=${VERSION} \
+    COMMIT_SHA=${COMMIT_SHA} \
+    ENVIRONMENT=${ENVIRONMENT} \
+    NODE_ENV=${NODE_ENV:-production} \
+    API_BASE_URL=${API_BASE_URL} \
+    API_VERSION=${API_VERSION}
+
 # Instalar OpenSSL y certificados actualizados
 RUN apk add --no-cache \
     ca-certificates \
