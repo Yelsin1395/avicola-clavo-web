@@ -11,13 +11,13 @@ const API_VERSION = process.env.API_VERSION;
 
 const proxyConfigPath = 'proxy.conf.json';
 const proxyConfig = {
-  '/caserita-gateway': {
+  '/avicola-clavo-experience': {
     target: API_BASE_URL,
     secure: false,
     changeOrigin: true,
     logLevel: 'debug',
     pathRewrite: {
-      '^/caserita-gateway': `/${API_VERSION}`,
+      '^/avicola-clavo-experience': `/${API_VERSION}`,
     },
   },
 };

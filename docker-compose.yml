@@ -1,0 +1,18 @@
+services:
+  avicola-clavo-web:
+    container_name: avicola-clavo-web
+    image: avicola-clavo-web-app-local:v1.0.0
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '80:80'
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
