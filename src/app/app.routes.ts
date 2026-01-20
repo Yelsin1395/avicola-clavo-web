@@ -23,14 +23,9 @@ export const routes: Routes = [
       {
         path: 'products',
         children: [
-          {
-            path: '',
-            component: ProductGridComponent,
-          },
-          {
-            path: 'create',
-            component: ToogleProductComponent,
-          },
+          { path: '', component: ProductGridComponent },
+          { path: 'create', component: ToogleProductComponent },
+          { path: 'edit/:id', component: ToogleProductComponent },
         ],
       },
     ],

@@ -1,25 +1,22 @@
 import { FormControl } from '@angular/forms';
-import { ProductType, ProductTypeString } from '../interfaces/productType.interface';
-import { CurrencyCode, CurrencySymbol } from '../interfaces/currency.interface';
+import {
+  UnitsMeasurementCode,
+  UnitsMeasurementName,
+} from '../interfaces/unitsMeasurement.interface';
 
 export interface CreateProductRequest {
-  imageUrl?: string;
   name: string;
-  type: ProductType;
-  brandOrProvider: string;
-  description: string;
-  currencyCode: CurrencyCode;
-  currencySymbol: CurrencySymbol;
-  basePrice: number;
+  description?: string;
+  unitsMeasurementName: UnitsMeasurementName;
+  unitsMeasurementCode: UnitsMeasurementCode;
+  price: number;
 }
 
 export interface CreateProductForm {
   name: FormControl<string>;
-  type: FormControl<ProductTypeString | string>;
-  brandOrProvider: FormControl<string>;
   description: FormControl<string>;
-  currencyCode: FormControl<CurrencyCode | string>;
-  basePrice: FormControl<number>;
+  unitsMeasurementName: FormControl<UnitsMeasurementName | string>;
+  price: FormControl<number>;
 }
 
 export interface SearchProductRequest {

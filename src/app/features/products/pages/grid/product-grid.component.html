@@ -18,8 +18,19 @@
     <div class="hero-content flex-row">
       <fieldset class="fieldset">
         <div class="join overflow-y-auto">
-          <input type="text" class="input join-item" placeholder="Nombre del producto" />
-          <button class="btn btn-secondary join-item">Buscar</button>
+          <input
+            #searchInput
+            type="text"
+            class="input join-item"
+            placeholder="Nombre del producto"
+            (keyup.enter)="onSearch(searchInput.value)"
+          />
+          <button class="btn btn-secondary join-item" (click)="onSearch(searchInput.value)">
+            Buscar
+          </button>
+          <button class="btn btn-soft join-item" (click)="onClear(searchInput)">
+            Limpiar
+          </button>
         </div>
       </fieldset>
     </div>
@@ -33,73 +44,86 @@
             <th></th>
             <th>Producto</th>
             <th>Descripción</th>
-            <th>Precio base</th>
-            <th>Publicado</th>
+            <th>Unidad de medida</th>
+            <th>Códgio de medida</th>
+            <th>Precio</th>
             <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
-          @if (dataGrid().length) { @for (item of dataGrid(); track item.id) {
-          <tr>
-            <th>
-              <div class="text-4xl font-thin opacity-30 tabular-nums">{{ $index }}</div>
-            </th>
-            <td>
-              <div class="flex items-center gap-3">
-                <div class="avatar">
-                  <div class="mask mask-squircle h-12 w-12">
-                    @if (item.imageUrl) {
-                    <img [src]="item.imageUrl" [alt]="item.name" />
-                    } @else {
-                    <img
-                      src="https://img.daisyui.com/images/profile/demo/2@94.webp"
-                      alt="Avatar Tailwind CSS Component"
-                    />
-                    }
+          @if (dataGrid().length) {
+            @for (item of dataGrid(); track item.id) {
+              <tr>
+                <th>
+                  <div class="text-4xl font-thin opacity-30 tabular-nums">
+                    {{ $index + 1 + (currentPage() - 1) * pageSize() }}
+                  </div>
+                </th>
+                <td>{{ item.name }}</td>
+                <td>{{ item.description }}</td>
+                <td>{{ item.unitsMeasurementName }}</td>
+                <td>{{ item.unitsMeasurementCode }}</td>
+                <td>{{ item.price }}</td>
+                <th>
+                  <button
+                    class="btn btn-soft btn-warning"
+                    [routerLink]="['/console/products/edit', item.id]"
+                  >
+                    <ng-icon name="cssPen" />
+                  </button>
+                  <button class="btn btn-soft btn-error" (click)="onDeleteProduct(item.id!)">
+                    <ng-icon name="cssTrash" />
+                  </button>
+                </th>
+              </tr>
+            }
+          } @else {
+            <tr>
+              <td colspan="7">
+                <div class="hero bg-base-200 min-h-screen">
+                  <div class="hero-content text-center">
+                    <div class="max-w-md">
+                      <h1 class="text-5xl font-bold">Hello there</h1>
+                      <p class="py-6">
+                        Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda excepturi
+                        exercitationem quasi. In deleniti eaque aut repudiandae et a id nisi.
+                      </p>
+                      <button class="btn btn-primary">Get Started</button>
+                    </div>
                   </div>
                 </div>
-                <div>
-                  <div class="font-bold">{{ item.name }}</div>
-                  <div class="text-sm opacity-50">{{ item.brandOrProvider }}</div>
-                </div>
-              </div>
-            </td>
-            <td>{{ item.description }}</td>
-            <td>{{ item.basePrice }}</td>
-            <td>{{ item.isPublished }}</td>
-            <th>
-              <button class="btn btn-ghost btn-xs">details</button>
-            </th>
-          </tr>
-          } } @else {
-          <tr>
-            <td colspan="6">
-              <div class="hero bg-base-200 min-h-screen">
-                <div class="hero-content text-center">
-                  <div class="max-w-md">
-                    <h1 class="text-5xl font-bold">Hello there</h1>
-                    <p class="py-6">
-                      Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda excepturi
-                      exercitationem quasi. In deleniti eaque aut repudiandae et a id nisi.
-                    </p>
-                    <button class="btn btn-primary">Get Started</button>
-                  </div>
-                </div>
-              </div>
-            </td>
-          </tr>
-
+              </td>
+            </tr>
           }
         </tbody>
         <!-- foot -->
         <tfoot class="text-center">
           <tr>
-            <td colspan="5">
+            <td colspan="7">
               <div class="join">
-                <button class="join-item btn">1</button>
+                <!-- <button class="join-item btn">1</button>
                 <button class="join-item btn btn-active">2</button>
                 <button class="join-item btn">3</button>
-                <button class="join-item btn">4</button>
+                <button class="join-item btn">4</button> -->
+                <button
+                  class="join-item btn"
+                  [disabled]="currentPage() === 1"
+                  (click)="changePage(currentPage() - 1)"
+                >
+                  «
+                </button>
+
+                <button class="join-item btn btn-active">
+                  Página {{ currentPage() }} de {{ totalPages() }}
+                </button>
+
+                <button
+                  class="join-item btn"
+                  [disabled]="currentPage() === totalPages()"
+                  (click)="changePage(currentPage() + 1)"
+                >
+                  »
+                </button>
               </div>
             </td>
           </tr>
