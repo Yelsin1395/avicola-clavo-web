@@ -1,0 +1,62 @@
+<app-layout-section>
+  <div class="overflow flex bg-base-200 rounded-box">
+    <div class="py-10 px-5">
+      <div class="text-left">
+        <h1 class="text-3xl font-bold">{{ isEditMode ? 'Editar' : 'Crear' }} cliente</h1>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero bg-base-200 rounded-box mt-8 py-6">
+    <form [formGroup]="createClientForm" (ngSubmit)="submitForm()">
+      <fieldset
+        class="fieldset rounded-box border p-4 mb-3 w-2xs md:w-xl grid grid-cols-1 md:grid-cols-2 gap-2"
+      >
+        <legend class="fieldset-legend px-2">Información general</legend>
+
+        <fieldset class="fieldset col-span-2 md:col-span-1">
+          <label class="label">Nombre</label>
+          <input
+            class="input w-full"
+            type="text"
+            placeholder="Ingrese nombre"
+            formControlName="name"
+          />
+        </fieldset>
+
+        <fieldset class="fieldset col-span-2 md:col-span-1">
+          <label class="label">Apellido</label>
+          <input
+            class="input w-full"
+            type="text"
+            placeholder="Ingrese apellido"
+            formControlName="surname"
+          />
+        </fieldset>
+
+        <fieldset class="fieldset col-span-2 md:col-span-1">
+          <label class="label">Etiqueta</label>
+          <input
+            class="input w-full"
+            type="text"
+            placeholder="Ingrese etiqueta"
+            formControlName="label"
+          />
+        </fieldset>
+      </fieldset>
+
+      <fieldset
+        class="fieldset rounded-box border p-4 mb-3 w-2xs md:w-xl grid grid-cols-1 md:grid-cols-2 gap-2"
+      >
+        <legend class="fieldset-legend px-2">Acciones</legend>
+
+        <div class="col-span-2 flex md:justify-center flex-col md:flex-row gap-2">
+          <button class="btn btn-primary btn-wide">Guardar</button>
+          <button routerLink="/console/products" class="btn btn-soft btn-wide text-red-500">
+            Cancelar
+          </button>
+        </div>
+      </fieldset>
+    </form>
+  </div>
+</app-layout-section>

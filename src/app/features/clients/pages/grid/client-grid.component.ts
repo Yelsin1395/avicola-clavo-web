@@ -1,45 +1,48 @@
 import { Component, DestroyRef, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
-import { ProductService } from '@features/products/services/product.service';
 import { SectionComponent } from '@core/layout/section.component';
-import { Product } from '@features/products/models/entity/product.entity';
+import { Client } from '@features/clients/models/entity/client.entity';
+import { SearchClientRequest } from '@features/clients/models/in/client.in';
+import { CONFIG_STATUS_PAYMENT } from '@features/clients/models/interfaces/paymentStatusClient.interface';
+import { ClientService } from '@features/clients/services/client.service';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { cssTrash, cssPen } from '@ng-icons/css.gg';
-import { SearchProductRequest } from '@features/products/models/in/product.in';
 
 @Component({
-  selector: 'app-product-grid.component',
-  templateUrl: './product-grid.component.html',
+  selector: 'app-client-grid.component',
+  templateUrl: './client-grid.component.html',
   imports: [SectionComponent, RouterLink, NgIcon],
   viewProviders: [provideIcons({ cssTrash, cssPen })],
 })
-export class ProductGridComponent {
-  private readonly productService = inject(ProductService);
+export class ClientGridComponent {
+  private readonly clientService = inject(ClientService);
   private readonly destroyRef = inject(DestroyRef);
 
-  dataGrid = signal<Product[]>([]);
+  dataGrid = signal<Client[]>([]);
   totalItems = signal(0);
   totalPages = signal(0);
 
-  searchName = signal('');
+  searchFullName = signal('');
   currentPage = signal(1);
   pageSize = signal(30);
 
+  configStatusPayment = CONFIG_STATUS_PAYMENT;
+
   constructor() {
     effect(() => {
-      this.loadProducts();
+      this.loadGrid();
     });
   }
 
-  loadProducts(): void {
-    const filters: SearchProductRequest = {
+  loadGrid(): void {
+    const filters: SearchClientRequest = {
       skip: this.currentPage(),
       take: this.pageSize(),
-      name: this.searchName(),
+      fullName: this.searchFullName(),
     };
 
-    this.productService
+    this.clientService
       .search(filters)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((response) => {
@@ -50,7 +53,7 @@ export class ProductGridComponent {
   }
 
   onSearch(term: string): void {
-    this.searchName.set(term);
+    this.searchFullName.set(term);
     this.currentPage.set(1);
   }
 
@@ -63,16 +66,16 @@ export class ProductGridComponent {
   onClear(inputElement: HTMLInputElement): void {
     inputElement.value = '';
 
-    this.searchName.set('');
+    this.searchFullName.set('');
     this.currentPage.set(1);
   }
 
-  onDeleteProduct(id: string): void {
-    this.productService
+  onDelete(id: string): void {
+    this.clientService
       .delete(id)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
-        const updatedData = this.dataGrid().filter((product) => product.id !== id);
+        const updatedData = this.dataGrid().filter((client) => client.id !== id);
         this.dataGrid.set(updatedData);
       });
   }

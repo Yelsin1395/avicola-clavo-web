@@ -1,0 +1,138 @@
+<app-layout-section>
+  <div class="hero bg-base-200 rounded-box">
+    <div class="hero-content flex-col lg:flex-row py-10">
+      <div class="text-center md:text-left">
+        <h1 class="text-3xl font-bold">Gestion de clientes</h1>
+        <p class="py-4">
+          Administrar tu catálogo de clientes y cobranzas, realiza el seguimiento detallado de
+          abonos y saldos por pedido.
+        </p>
+      </div>
+      <div class="w-full text-center md:text-right">
+        <a class="btn btn-primary btn-wide" routerLink="/console/clients/create">Crear cliente</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero bg-base-200 rounded-box mt-8">
+    <div class="hero-content flex-row">
+      <fieldset class="fieldset">
+        <div class="join overflow-y-auto">
+          <input
+            #searchInput
+            type="text"
+            class="input join-item"
+            placeholder="Nombre del cliente"
+            (keyup.enter)="onSearch(searchInput.value)"
+          />
+          <button class="btn btn-secondary join-item" (click)="onSearch(searchInput.value)">
+            Buscar
+          </button>
+          <button class="btn btn-soft join-item" (click)="onClear(searchInput)">Limpiar</button>
+        </div>
+      </fieldset>
+    </div>
+  </div>
+
+  <div class="hero bg-base-200 rounded-box mt-8 py-6">
+    <div class="overflow-x-auto w-full">
+      <table class="table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Nombres</th>
+            <th>Etiqueta</th>
+            <th>Estado</th>
+            <th>Saldo actual</th>
+            <th>Órdenes por pagar</th>
+            <th>Última orden</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (dataGrid().length) {
+            @for (item of dataGrid(); track item.id) {
+              <tr>
+                <th>
+                  <div class="text-4xl font-thin opacity-30 tabular-nums">
+                    {{ $index + 1 + (currentPage() - 1) * pageSize() }}
+                  </div>
+                </th>
+                <td>{{ item.fullName }}</td>
+                <td>{{ item.label }}</td>
+                <td>
+                  <div [class]="'badge ' + configStatusPayment[item.currentPaymentStatus].color">
+                    {{ configStatusPayment[item.currentPaymentStatus].descriptionEs }}
+                  </div>
+                </td>
+                <td>{{ item.currentBalance }}</td>
+                <td>{{ item.pendingOrdersPayments }}</td>
+                <td>{{ item.lasOrderDate }}</td>
+                <th>
+                  <button
+                    class="btn btn-soft btn-warning"
+                    [routerLink]="['/console/clients/edit', item.id]"
+                  >
+                    <ng-icon name="cssPen" />
+                  </button>
+                  <button class="btn btn-soft btn-error" (click)="onDelete(item.id!)">
+                    <ng-icon name="cssTrash" />
+                  </button>
+                </th>
+              </tr>
+            }
+          } @else {
+            <tr>
+              <td colspan="7">
+                <div class="hero bg-base-200 min-h-screen">
+                  <div class="hero-content text-center">
+                    <div class="max-w-md">
+                      <h1 class="text-5xl font-bold">Hello there</h1>
+                      <p class="py-6">
+                        Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda excepturi
+                        exercitationem quasi. In deleniti eaque aut repudiandae et a id nisi.
+                      </p>
+                      <button class="btn btn-primary">Get Started</button>
+                    </div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+        <!-- foot -->
+        <tfoot class="text-center">
+          <tr>
+            <td colspan="7">
+              <div class="join">
+                <!-- <button class="join-item btn">1</button>
+                <button class="join-item btn btn-active">2</button>
+                <button class="join-item btn">3</button>
+                <button class="join-item btn">4</button> -->
+                <button
+                  class="join-item btn"
+                  [disabled]="currentPage() === 1"
+                  (click)="changePage(currentPage() - 1)"
+                >
+                  «
+                </button>
+
+                <button class="join-item btn btn-active">
+                  Página {{ currentPage() }} de {{ totalPages() }}
+                </button>
+
+                <button
+                  class="join-item btn"
+                  [disabled]="currentPage() === totalPages()"
+                  (click)="changePage(currentPage() + 1)"
+                >
+                  »
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+</app-layout-section>

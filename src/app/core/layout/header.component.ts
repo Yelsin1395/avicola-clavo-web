@@ -44,6 +44,11 @@ export class HeaderComponent {
           path: '/console/products',
           isEnabled: true,
         },
+        {
+          title: 'Clientes',
+          path: '/console/clients',
+          isEnabled: true,
+        },
       ],
     },
   ];
