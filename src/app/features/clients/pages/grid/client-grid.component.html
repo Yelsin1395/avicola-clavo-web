@@ -67,17 +67,19 @@
                 </td>
                 <td>{{ item.currentBalance }}</td>
                 <td>{{ item.pendingOrdersPayments }}</td>
-                <td>{{ item.lasOrderDate }}</td>
+                <td>{{ item.lastOrderDate | date: 'dd/MM/yyyy hh:mm a' }}</td>
                 <th>
-                  <button
-                    class="btn btn-soft btn-warning"
-                    [routerLink]="['/console/clients/edit', item.id]"
-                  >
-                    <ng-icon name="cssPen" />
-                  </button>
-                  <button class="btn btn-soft btn-error" (click)="onDelete(item.id!)">
-                    <ng-icon name="cssTrash" />
-                  </button>
+                  <div class="flex flex-row gap-2 justify-center">
+                    <button
+                      class="btn btn-soft btn-warning btn-sm"
+                      [routerLink]="['/console/clients/edit', item.id]"
+                    >
+                      <ng-icon name="cssPen" />
+                    </button>
+                    <button class="btn btn-soft btn-error btn-sm" (click)="onDelete(item.id!)">
+                      <ng-icon name="cssTrash" />
+                    </button>
+                  </div>
                 </th>
               </tr>
             }

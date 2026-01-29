@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, DestroyRef, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
@@ -12,7 +13,7 @@ import { cssTrash, cssPen } from '@ng-icons/css.gg';
 @Component({
   selector: 'app-client-grid.component',
   templateUrl: './client-grid.component.html',
-  imports: [SectionComponent, RouterLink, NgIcon],
+  imports: [SectionComponent, RouterLink, NgIcon, DatePipe],
   viewProviders: [provideIcons({ cssTrash, cssPen })],
 })
 export class ClientGridComponent {

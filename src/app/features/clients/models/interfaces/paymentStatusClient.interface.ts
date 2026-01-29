@@ -8,10 +8,10 @@ export enum StatusPaymentClient {
 
 enum StatusPaymentClientTranslate {
   NEW = 'NUEVO',
-  EARLY = 'PAGO ANTICIPADO',
-  PER_DAY = 'PAGOS AL DIA',
-  PENDING_CUMULATEDAYS = 'PENDIENTE DE PAGO',
-  LATE = 'PAGO ATRASADO',
+  EARLY = 'ANTICIPADO',
+  PER_DAY = 'AL DIA',
+  PENDING_CUMULATEDAYS = 'PENDIENTE',
+  LATE = 'ATRASADO',
 }
 
 interface ConfigStatusPayment {

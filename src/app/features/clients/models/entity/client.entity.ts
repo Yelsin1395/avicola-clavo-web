@@ -2,6 +2,7 @@ import { StatusPaymentClient } from '../interfaces/paymentStatusClient.interface
 
 export interface Client {
   id?: string;
+  dni?: string;
   name: string;
   surname: string;
   fullName?: string;
@@ -9,7 +10,7 @@ export interface Client {
   currentBalance: number;
   currentPaymentStatus: StatusPaymentClient;
   pendingOrdersPayments: number;
-  lasOrderDate?: Date;
+  lastOrderDate?: Date;
   isDeleted: boolean;
   createdAt: Date;
   updatedAt?: Date;
