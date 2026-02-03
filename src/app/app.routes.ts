@@ -7,6 +7,7 @@ import { ProductGridComponent } from '@features/products/pages/grid/product-grid
 import { ToogleProductComponent } from '@features/products/pages/toggle/toogle-product.component';
 import { ClientGridComponent } from '@features/clients/pages/grid/client-grid.component';
 import { ToogleClientComponent } from '@features/clients/pages/toogle/toogle-client.component';
+import { CreateOrderComponent } from '@features/orders/pages/create/create-order.component';
 
 export const routes: Routes = [
   {
@@ -36,6 +37,12 @@ export const routes: Routes = [
           { path: '', component: ClientGridComponent },
           { path: 'create', component: ToogleClientComponent },
           { path: 'edit/:id', component: ToogleClientComponent },
+        ],
+      },
+      {
+        path: 'orders',
+        children: [
+          { path: 'create/:id', component: CreateOrderComponent },
         ],
       },
     ],

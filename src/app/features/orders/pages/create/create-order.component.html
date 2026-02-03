@@ -1,0 +1,157 @@
+<app-layout-section>
+  <div class="overflow flex bg-base-200 rounded-box">
+    <div class="py-10 px-5">
+      <div class="text-left">
+        <h1 class="text-3xl font-bold">Crear pedido</h1>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero bg-base-200 rounded-box mt-8 py-6">
+    <form (ngSubmit)="submitForm()">
+      <fieldset class="fieldset rounded-box border p-4 mb-3 w-2xs md:w-xl grid grid-cols-1 gap-2">
+        <legend class="fieldset-legend px-2">Selecciona los productos</legend>
+
+        <div class="relative">
+          <label class="input w-full">
+            <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <g
+                stroke-linejoin="round"
+                stroke-linecap="round"
+                stroke-width="2.5"
+                fill="none"
+                stroke="currentColor"
+              >
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="m21 21-4.3-4.3"></path>
+              </g>
+            </svg>
+            <input
+              type="search"
+              class="grow"
+              [formControl]="searchControl"
+              (focus)="performSearch(searchControl.value || '')"
+              placeholder="Escribe al menos 3 letras"
+            />
+          </label>
+
+          @if (isLoading()) {
+            <span
+              class="loading loading-spinner loading-sm absolute right-3 top-1/2 -translate-y-1/2 text-primary"
+            ></span>
+          }
+        </div>
+
+        <ul class="list bg-base-100 rounded-box shadow-md">
+          <li class="p-4 pb-2 text-xs opacity-60 tracking-wide">Lista de productos</li>
+          @for (result of searchResults(); track result.id) {
+            <li class="list-row flex items-center justify-between">
+              <div class="flex-1">
+                <div class="font-medium">{{ result.name }}</div>
+                <div class="text-xs uppercase font-semibold opacity-60">S/ {{ result.price }}</div>
+              </div>
+
+              <div class="flex-none">
+                <button class="btn btn-primary btn-sm" (click)="addItem(result)">Añadir</button>
+              </div>
+            </li>
+          }
+        </ul>
+      </fieldset>
+
+      <fieldset class="fieldset rounded-box border p-4 mb-3 w-2xs md:w-xl grid grid-cols-1 gap-2">
+        <legend class="fieldset-legend px-2">Productos selecionados</legend>
+
+        <div class="overflow-x-auto w-full">
+          <table class="table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Producto</th>
+                <th>Precio (S/)</th>
+                <th>Cantidad</th>
+                <th>Subtotal</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of selectedItems(); track item.productId; let index = $index) {
+                <tr>
+                  <th>{{ index + 1 }}</th>
+                  <td>{{ item.productName }}</td>
+                  <td>{{ item.priceAtPurchase }}</td>
+                  <td>
+                    <input
+                      type="number"
+                      class="input input-bordered input-sm w-20"
+                      [value]="item.quantity"
+                      (input)="updateQuantity(item.productId, +$any($event.target).value)"
+                    />
+                  </td>
+                  <td>{{ item.subTotal }}</td>
+                  <td>
+                    <button
+                      class="btn btn-soft btn-error btn-sm"
+                      (click)="removeItem(item.productId)"
+                    >
+                      <ng-icon name="cssTrash" />
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+            <tfoot>
+              <tr>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th>Total</th>
+                <th>{{ totalPriceItems() }}</th>
+                <th></th>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </fieldset>
+
+      <fieldset class="fieldset rounded-box border p-4 mb-3 w-2xs md:w-xl grid grid-cols-1 gap-2">
+        <legend class="fieldset-legend px-2">Configuración de pago</legend>
+
+        <div class="flex items-center gap-2">
+          <input
+            type="checkbox"
+            class="checkbox checkbox-primary"
+            [value]="isEarlyPayment"
+            [formControl]="isEarlyPayment"
+          />
+          <span class="label-text">Pagó por adelantado</span>
+        </div>
+
+        @if (isEarlyPayment.value) {
+          <fieldset class="fieldset">
+            <legend class="fieldset-legend">Método de Pago</legend>
+            <select class="select w-full" [formControl]="paymentMethodControl">
+              <option disabled selected value="">Seleccione el método de pago</option>
+              @for (method of paymentMethodsList; track $index) {
+                <option [value]="method">{{ method }}</option>
+              }
+            </select>
+          </fieldset>
+        }
+      </fieldset>
+
+      <fieldset
+        class="fieldset rounded-box border p-4 mb-3 w-2xs md:w-xl grid grid-cols-1 md:grid-cols-2 gap-2"
+      >
+        <legend class="fieldset-legend px-2">Acciones</legend>
+
+        <div class="col-span-2 flex md:justify-center flex-col md:flex-row gap-2">
+          <button class="btn btn-primary btn-wide">Guardar</button>
+          <button routerLink="/console/clients" class="btn btn-soft btn-wide text-red-500">
+            Cancelar
+          </button>
+        </div>
+      </fieldset>
+    </form>
+  </div>
+</app-layout-section>

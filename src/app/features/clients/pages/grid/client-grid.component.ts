@@ -8,13 +8,13 @@ import { SearchClientRequest } from '@features/clients/models/in/client.in';
 import { CONFIG_STATUS_PAYMENT } from '@features/clients/models/interfaces/paymentStatusClient.interface';
 import { ClientService } from '@features/clients/services/client.service';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { cssTrash, cssPen } from '@ng-icons/css.gg';
+import { cssTrash, cssPen, cssList } from '@ng-icons/css.gg';
 
 @Component({
   selector: 'app-client-grid.component',
   templateUrl: './client-grid.component.html',
   imports: [SectionComponent, RouterLink, NgIcon, DatePipe],
-  viewProviders: [provideIcons({ cssTrash, cssPen })],
+  viewProviders: [provideIcons({ cssTrash, cssPen, cssList })],
 })
 export class ClientGridComponent {
   private readonly clientService = inject(ClientService);
