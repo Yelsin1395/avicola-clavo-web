@@ -1,0 +1,275 @@
+<app-layout-section>
+  <div class="hero bg-base-200 rounded-box">
+    <div class="hero-content flex-col lg:flex-row py-10">
+      <div class="text-center md:text-left">
+        <h1 class="text-3xl font-bold">Gestion de Pedidos</h1>
+        <p class="py-4">
+          Administra tus pedidos y mantente al tanto de cada etapa, gestiona tus entregas o realiza
+          cancelaciones de forma rápida y sencilla.
+        </p>
+      </div>
+      <div class="w-full text-center md:text-right">
+        <!-- <a class="btn btn-primary btn-wide">Crear producto</a> -->
+      </div>
+    </div>
+  </div>
+
+  <div class="hero bg-base-200 rounded-box mt-8 py-6">
+    <div role="tablist" class="tabs tabs-border">
+      <a
+        role="tab"
+        class="tab"
+        [class.tab-active]="currentStatus() === OrderStatus.PENDING"
+        (click)="changeTabStatus(OrderStatus.PENDING)"
+      >
+        Pendientes
+      </a>
+      <a
+        role="tab"
+        class="tab"
+        [class.tab-active]="currentStatus() === OrderStatus.PROCESSING"
+        (click)="changeTabStatus(OrderStatus.PROCESSING)"
+      >
+        En camino
+      </a>
+      <a
+        role="tab"
+        class="tab"
+        [class.tab-active]="currentStatus() === OrderStatus.COMPLETED"
+        (click)="changeTabStatus(OrderStatus.COMPLETED)"
+      >
+        Completado
+      </a>
+      <a
+        role="tab"
+        class="tab"
+        [class.tab-active]="currentStatus() === OrderStatus.CANCELLED"
+        (click)="changeTabStatus(OrderStatus.CANCELLED)"
+      >
+        Cancelado
+      </a>
+    </div>
+  </div>
+
+  <div class="hero bg-base-200 rounded-box mt-8 py-6">
+    @if (isLoading()) {
+      <div
+        class="absolute inset-0 z-10 flex flex-col items-center justify-center bg-base-200/50 backdrop-blur-[1px] rounded-box"
+      >
+        <span class="loading loading-spinner loading-lg text-neutral"></span>
+        <p class="mt-2 font-medium text-neutral">Cargando pedidos</p>
+      </div>
+    }
+
+    <div class="overflow-x-auto w-full">
+      <table class="table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Client</th>
+            <th>Label</th>
+            <th>Estado de pedido</th>
+            <th>Estado de pago</th>
+            <th>Método de pago</th>
+            <th>Fecha</th>
+            <th>Total (S/)</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (dataGrid().length) {
+            @for (item of dataGrid(); track item.id) {
+              <tr>
+                <th>
+                  <div class="text-4xl font-thin opacity-30 tabular-nums">
+                    {{ $index + 1 + (currentPage() - 1) * pageSize() }}
+                  </div>
+                </th>
+                <td>
+                  <button
+                    (click)="openOrderDetails(item)"
+                    class="link link-primary no-underline hover:underline text-left"
+                  >
+                    {{ item.clientName }}
+                  </button>
+                </td>
+                <td>{{ item.clientLabel }}</td>
+                <td>
+                  <div [class]="'badge ' + configStatusOrder[item.status].color">
+                    {{ configStatusOrder[item.status].descriptionEs }}
+                  </div>
+                </td>
+                <td>
+                  <div [class]="'badge ' + configStatusPayment[item.paymentStatus].color">
+                    {{ configStatusPayment[item.paymentStatus].descriptionEs }}
+                  </div>
+                </td>
+                <td>{{ item.paymentMethod }}</td>
+                <td>{{ item.updatedAt | date: 'dd/MM/yyyy hh:mm a' }}</td>
+                <td>{{ item.totalAmount }}</td>
+                <th>
+                  <div class="flex flex-row gap-2 justify-center">
+                    @if (currentStatus() === OrderStatus.PENDING) {
+                      <button
+                        class="btn btn-soft btn-primary btn-sm"
+                        (click)="changeStatusOrder(item.id, OrderStatus.PROCESSING)"
+                        [disabled]="isOrderLoading(item.id)"
+                      >
+                        @if (isOrderLoading(item.id)) {
+                          <span class="loading loading-spinner loading-xs"></span>
+                        } @else {
+                          En Camino
+                        }
+                      </button>
+                    } @else if (currentStatus() === OrderStatus.PROCESSING) {
+                      <button
+                        class="btn btn-soft btn-success btn-sm"
+                        (click)="changeStatusOrder(item.id, OrderStatus.COMPLETED)"
+                        [disabled]="isOrderLoading(item.id)"
+                      >
+                        @if (isOrderLoading(item.id)) {
+                          <span class="loading loading-spinner loading-xs"></span>
+                        } @else {
+                          Completado
+                        }
+                      </button>
+                    }
+                  </div>
+                </th>
+              </tr>
+            }
+          } @else {
+            <tr>
+              <td colspan="9">
+                <div class="hero bg-base-200 min-h-screen">
+                  <div class="hero-content text-center">
+                    <div class="max-w-md">
+                      <h1 class="text-5xl font-bold">Pedidos</h1>
+                      <p class="py-6">Aún no tiene pedidos realizado</p>
+                      <button class="btn btn-primary">Ir a casa</button>
+                    </div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+        <tfoot class="text-center">
+          <tr>
+            <td colspan="9">
+              <div class="join">
+                <button
+                  class="join-item btn"
+                  [disabled]="currentPage() === 1"
+                  (click)="changePage(currentPage() - 1)"
+                >
+                  «
+                </button>
+
+                <button class="join-item btn btn-active">
+                  Página {{ currentPage() }} de {{ totalPages() }}
+                </button>
+
+                <button
+                  class="join-item btn"
+                  [disabled]="currentPage() === totalPages()"
+                  (click)="changePage(currentPage() + 1)"
+                >
+                  »
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+</app-layout-section>
+
+<dialog id="order_details_modal" class="modal modal-bottom sm:modal-middle">
+  <div class="modal-box">
+    <h3 class="font-bold text-lg border-b pb-2 flex justify-between">
+      <span>Detalles del Pedido</span>
+      <span class="badge badge-ghost">ID: {{ selectedOrder()?.id?.slice(0, 8) }}</span>
+    </h3>
+
+    @if (selectedOrder(); as order) {
+      <div class="py-4">
+        <div class="grid grid-cols-2 gap-4 mb-4 text-sm">
+          <div>
+            <p class="opacity-60">Cliente</p>
+            <p class="font-semibold">{{ order.clientName }}</p>
+          </div>
+          <div>
+            <p class="opacity-60">Acciones</p>
+            <div>
+              <button class="btn btn-accent btn-sm"><ng-icon name="cssPrinter" />Imprimir</button>
+            </div>
+          </div>
+          <div>
+            <p class="opacity-60">Establecimiento / Label</p>
+            <p class="font-semibold">{{ order.clientLabel }}</p>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto bg-base-100 rounded-lg border">
+          <table class="table table-zebra w-full">
+            <thead>
+              <tr class="bg-base-300">
+                <th>Producto</th>
+                <th class="text-center">Cant.</th>
+                <th class="text-right">Precio Unit.</th>
+                <th class="text-right">Subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of order.items; track item.id) {
+                <tr>
+                  <td>{{ item.productName }}</td>
+                  <td class="text-center">{{ item.quantity }}</td>
+                  <td class="text-right">S/ {{ item.priceAtPurchase }}</td>
+                  <td class="text-right font-medium">S/ {{ item.subTotal }}</td>
+                </tr>
+              }
+            </tbody>
+            <tfoot>
+              <tr class="text-md">
+                <td colspan="3" class="text-right font-bold uppercase">Total</td>
+                <td class="text-right font-bold text-primary text-lg">
+                  S/ {{ order.totalAmount }}
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    }
+
+    <div class="modal-action">
+      <form method="dialog">
+        <button
+          class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+          (click)="closeModal()"
+        >
+          ✕
+        </button>
+
+        @if (currentStatus() === OrderStatus.PENDING) {
+          <button
+            class="btn mx-2 btn-ghost"
+            type="button"
+            (click)="changeStatusOrder(selectedOrder()?.id!, OrderStatus.CANCELLED)"
+          >
+            Cancelar orden
+          </button>
+        }
+
+        <button class="btn btn-soft btn-primary" (click)="closeModal()">Cerrar</button>
+      </form>
+    </div>
+  </div>
+
+  <form method="dialog" class="modal-backdrop">
+    <button (click)="closeModal()">close</button>
+  </form>
+</dialog>

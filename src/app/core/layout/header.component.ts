@@ -35,21 +35,19 @@ export class HeaderComponent {
       isEnabled: true,
     },
     {
-      title: 'Operaciones',
-      icon: 'cssBox',
+      title: 'Productos',
+      path: '/console/products',
       isEnabled: true,
-      children: [
-        {
-          title: 'Productos',
-          path: '/console/products',
-          isEnabled: true,
-        },
-        {
-          title: 'Clientes',
-          path: '/console/clients',
-          isEnabled: true,
-        },
-      ],
+    },
+    {
+      title: 'Clientes',
+      path: '/console/clients',
+      isEnabled: true,
+    },
+    {
+      title: 'Pedidos',
+      path: '/console/orders',
+      isEnabled: true,
     },
   ];
 }

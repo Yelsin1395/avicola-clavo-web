@@ -6,6 +6,7 @@ interface OrderItem {
   id: string;
   orderId: string;
   productId: string;
+  productName: string;
   quantity: number;
   priceAtPurchase: number;
   subTotal: number;
@@ -19,5 +20,6 @@ export interface Order {
   paymentStatus: PaymentStatus;
   items: OrderItem[];
   totalAmount: number;
+  createdAt: Date
   updatedAt: Date;
 }

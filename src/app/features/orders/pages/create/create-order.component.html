@@ -31,7 +31,7 @@
               class="grow"
               [formControl]="searchControl"
               (focus)="performSearch(searchControl.value || '')"
-              placeholder="Escribe al menos 3 letras"
+              placeholder="Busca el producto"
             />
           </label>
 
@@ -47,12 +47,19 @@
           @for (result of searchResults(); track result.id) {
             <li class="list-row flex items-center justify-between">
               <div class="flex-1">
-                <div class="font-medium">{{ result.name }}</div>
+                <div class="font-medium">
+                  {{ result.name }}
+                  <span class="text-xs text-gray-500 font-normal">
+                    ({{ result.unitsMeasurementCode }})
+                  </span>
+                </div>
                 <div class="text-xs uppercase font-semibold opacity-60">S/ {{ result.price }}</div>
               </div>
 
               <div class="flex-none">
-                <button class="btn btn-primary btn-sm" (click)="addItem(result)">Añadir</button>
+                <button class="btn btn-primary btn-sm" type="button" (click)="addItem(result)">
+                  Añadir
+                </button>
               </div>
             </li>
           }
@@ -92,6 +99,7 @@
                   <td>
                     <button
                       class="btn btn-soft btn-error btn-sm"
+                      type="button"
                       (click)="removeItem(item.productId)"
                     >
                       <ng-icon name="cssTrash" />
@@ -146,8 +154,12 @@
         <legend class="fieldset-legend px-2">Acciones</legend>
 
         <div class="col-span-2 flex md:justify-center flex-col md:flex-row gap-2">
-          <button class="btn btn-primary btn-wide">Guardar</button>
-          <button routerLink="/console/clients" class="btn btn-soft btn-wide text-red-500">
+          <button class="btn btn-primary btn-wide" type="submit">Guardar</button>
+          <button
+            routerLink="/console/clients"
+            class="btn btn-soft btn-wide text-red-500"
+            type="button"
+          >
             Cancelar
           </button>
         </div>

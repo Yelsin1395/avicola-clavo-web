@@ -5,12 +5,13 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { SectionComponent } from '@core/layout/section.component';
 import { CreateOrderRequest, OrderItemRequest } from '@features/orders/models/in/order.in';
 import { Product } from '@features/products/models/entity/product.entity';
-import { SearchProductRequest } from '@features/products/models/in/product.in';
 import { ProductService } from '@features/products/services/product.service';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { debounceTime, distinctUntilChanged, filter, map } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { cssTrash } from '@ng-icons/css.gg';
 import { PaymentMethod } from '@features/orders/models/interfaces/paymentMethod.interface';
+import { OrderService } from '@features/orders/services/order.service';
+import { ErrorResponse } from '@core/models/errorResponse.model';
 
 @Component({
   selector: 'app-create-order.component',
@@ -40,7 +41,7 @@ export class CreateOrderComponent implements OnInit {
     { initialValue: '' },
   );
 
-  constructor() {
+  constructor(private readonly orderService: OrderService) {
     effect(() => {
       const term = this.searchTerm();
 
@@ -124,11 +125,17 @@ export class CreateOrderComponent implements OnInit {
     const payload = {
       clientId: this.clientId(),
       isPendingPayment: !this.isEarlyPayment.value,
-      paymentMethod: this.paymentMethodControl.value,
+      paymentMethod: this.paymentMethodControl.value || null,
       items: this.selectedItems(),
       totalAmount: this.totalPriceItems(),
     } as CreateOrderRequest;
 
-    console.log({ payload });
+    this.orderService
+      .create(payload)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => void this.router.navigate(['/console/clients']),
+        error: (error: ErrorResponse) => console.error(error),
+      });
   }
 }

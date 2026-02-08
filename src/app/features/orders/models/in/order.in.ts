@@ -1,5 +1,12 @@
 import { FormControl } from '@angular/forms';
 import { PaymentMethod } from '../interfaces/paymentMethod.interface';
+import { OrderStatus } from '../interfaces/orderStatus.interface';
+
+export interface SearchOrderRequest {
+  status: OrderStatus;
+  take: number;
+  skip: number;
+}
 
 export interface OrderItemRequest {
   productId: string;

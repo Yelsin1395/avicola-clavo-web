@@ -1,8 +1,8 @@
-import { Component, DestroyRef, inject, Input, input, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, Input, input, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { Observable } from 'rxjs';
+import { finalize, Observable } from 'rxjs';
 import { SectionComponent } from '@core/layout/section.component';
 import { ErrorResponse } from '@core/models/errorResponse.model';
 import { CreateProductForm, CreateProductRequest } from '@features/products/models/in/product.in';
@@ -17,6 +17,7 @@ import { ProductService } from '@features/products/services/product.service';
 export class ToogleProductComponent implements OnInit {
   productId: string | null = null;
   isEditMode = false;
+  isLoading = signal(false);
   createProductForm: FormGroup<CreateProductForm>;
   destroyRef = inject(DestroyRef);
   unitsMeasurements = Object.entries(UnitsMeasurementMap).map(([name, code]) => ({ name, code }));
@@ -55,6 +56,8 @@ export class ToogleProductComponent implements OnInit {
   submitForm(): void {
     if (this.createProductForm.invalid) return;
 
+    this.isLoading.set(true);
+
     const entry = this.createProductForm.getRawValue();
 
     const payload = {
@@ -67,9 +70,14 @@ export class ToogleProductComponent implements OnInit {
       ? this.productService.update(this.productId!, payload)
       : this.productService.create(payload);
 
-    request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: () => void this.router.navigate(['/console/products']),
-      error: (error: ErrorResponse) => console.error(error),
-    });
+    request$
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.isLoading.set(false)),
+      )
+      .subscribe({
+        next: () => void this.router.navigate(['/console/products']),
+        error: (error: ErrorResponse) => console.error(error),
+      });
   }
 }

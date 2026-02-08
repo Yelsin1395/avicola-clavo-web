@@ -21,6 +21,7 @@ export class ClientGridComponent {
   private readonly destroyRef = inject(DestroyRef);
 
   dataGrid = signal<Client[]>([]);
+  isLoading = signal(true);
   totalItems = signal(0);
   totalPages = signal(0);
 
@@ -46,10 +47,17 @@ export class ClientGridComponent {
     this.clientService
       .search(filters)
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((response) => {
-        this.dataGrid.set(response.data.items);
-        this.totalItems.set(response.data.count);
-        this.totalPages.set(response.data.totalPages);
+      .subscribe({
+        next: (response) => {
+          this.dataGrid.set(response.data.items);
+          this.totalItems.set(response.data.count);
+          this.totalPages.set(response.data.totalPages);
+          this.isLoading.set(false);
+        },
+        error: () => {
+          this.isLoading.set(false);
+          this.dataGrid.set([]);
+        },
       });
   }
 

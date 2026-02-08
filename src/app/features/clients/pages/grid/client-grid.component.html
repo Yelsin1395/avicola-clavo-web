@@ -34,6 +34,15 @@
   </div>
 
   <div class="hero bg-base-200 rounded-box mt-8 py-6">
+    @if (isLoading()) {
+      <div
+        class="absolute inset-0 z-10 flex flex-col items-center justify-center bg-base-200/50 backdrop-blur-[1px] rounded-box"
+      >
+        <span class="loading loading-spinner loading-lg text-neutral"></span>
+        <p class="mt-2 font-medium text-neutral">Cargando clientes</p>
+      </div>
+    }
+
     <div class="overflow-x-auto w-full">
       <table class="table">
         <thead>

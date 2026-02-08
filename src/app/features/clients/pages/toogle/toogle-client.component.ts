@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -6,7 +6,7 @@ import { SectionComponent } from '@core/layout/section.component';
 import { ErrorResponse } from '@core/models/errorResponse.model';
 import { CreateClientForm, CreateClientRequest } from '@features/clients/models/in/client.in';
 import { ClientService } from '@features/clients/services/client.service';
-import { Observable } from 'rxjs';
+import { finalize, Observable } from 'rxjs';
 
 @Component({
   selector: 'app-toogle-client.component',
@@ -16,6 +16,7 @@ import { Observable } from 'rxjs';
 export class ToogleClientComponent implements OnInit {
   clientId: string | null = null;
   isEditMode = false;
+  isLoading = signal(false);
   createClientForm: FormGroup<CreateClientForm>;
   destroyRef = inject(DestroyRef);
 
@@ -52,6 +53,8 @@ export class ToogleClientComponent implements OnInit {
   submitForm(): void {
     if (this.createClientForm.invalid) return;
 
+    this.isLoading.set(true);
+
     const entry = this.createClientForm.getRawValue();
 
     const payload = {
@@ -64,9 +67,14 @@ export class ToogleClientComponent implements OnInit {
       ? this.clientService.update(this.clientId!, payload)
       : this.clientService.create(payload);
 
-    request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: () => void this.router.navigate(['/console/clients']),
-      error: (error: ErrorResponse) => console.error(error),
-    });
+    request$
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.isLoading.set(false)),
+      )
+      .subscribe({
+        next: () => void this.router.navigate(['/console/clients']),
+        error: (error: ErrorResponse) => console.error(error),
+      });
   }
 }
