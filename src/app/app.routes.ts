@@ -9,6 +9,8 @@ import { ClientGridComponent } from '@features/clients/pages/grid/client-grid.co
 import { ToogleClientComponent } from '@features/clients/pages/toogle/toogle-client.component';
 import { OrderGridComponent } from '@features/orders/pages/grid/order-grid.component';
 import { CreateOrderComponent } from '@features/orders/pages/create/create-order.component';
+import { CollectionGridComponent } from '@features/collections/pages/grid/collection-grid.component';
+import { CollectionTrackingComponent } from '@features/collections/pages/tracking/collection-tracking.component';
 
 export const routes: Routes = [
   {
@@ -45,6 +47,13 @@ export const routes: Routes = [
         children: [
           { path: '', component: OrderGridComponent },
           { path: 'create/:id', component: CreateOrderComponent },
+        ],
+      },
+      {
+        path: 'collections',
+        children: [
+          { path: '', component: CollectionGridComponent },
+          { path: 'tracking/:clientId', component: CollectionTrackingComponent },
         ],
       },
     ],

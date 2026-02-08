@@ -16,6 +16,10 @@ export interface SearchOrderResponse extends BaseResponse {
   };
 }
 
+export interface FindAllByClientResponse extends BaseResponse {
+  data: Order[];
+}
+
 export interface CreateOrderResponse extends BaseResponse {
   data: { id: string };
 }

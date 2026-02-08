@@ -1,0 +1,173 @@
+<app-layout-section>
+  <div class="overflow flex bg-base-200 rounded-box">
+    <div class="py-10 px-5 w-full">
+      <div class="text-left">
+        <h1 class="text-3xl font-bold">Seguimiento</h1>
+      </div>
+    </div>
+    <div class="py-10 px-5 w-full">
+      <div class="text-right">
+        <a class="btn btn-primary btn-wide" routerLink="/console/collections">Volver</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero bg-base-200 rounded-box mt-8 py-6">
+    <div role="tablist" class="tabs tabs-border">
+      <a
+        role="tab"
+        class="tab"
+        [class.tab-active]="currentOrderPaymentStatus() === PaymentStatus.PENDING"
+        (click)="changeTabPaymentStatus(PaymentStatus.PENDING)"
+      >
+        Pendientes
+      </a>
+
+      <a
+        role="tab"
+        class="tab"
+        [class.tab-active]="currentOrderPaymentStatus() === PaymentStatus.COMPLETED"
+        (click)="changeTabPaymentStatus(PaymentStatus.COMPLETED)"
+      >
+        Completados
+      </a>
+    </div>
+  </div>
+
+  <div class="hero bg-base-200 rounded-box mt-8 py-6">
+    @if (isLoading()) {
+      <div
+        class="absolute inset-0 z-10 flex flex-col items-center justify-center bg-base-200/50 backdrop-blur-[1px] rounded-box"
+      >
+        <span class="loading loading-spinner loading-lg text-neutral"></span>
+        <p class="mt-2 font-medium text-neutral">Cargando pedidos</p>
+      </div>
+    }
+
+    <div class="overflow-x-auto w-full">
+      <table class="table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Pedido</th>
+            <th>Estado de pago</th>
+            <th>Método de pago</th>
+            <th>Pago acumulatico (S/)</th>
+            <th>Saldo restante (S/)</th>
+            <th>Monto total (S/)</th>
+            <th>Fecha</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of dataGrid(); track item.id) {
+            <tr>
+              <th>
+                <div class="text-4xl font-thin opacity-30 tabular-nums">
+                  {{ $index + 1 }}
+                </div>
+              </th>
+              <td>
+                <button
+                  (click)="loadCollections(item.id)"
+                  class="link link-primary no-underline hover:underline text-left"
+                >
+                  {{ item.id.slice(0, 8) }}
+                </button>
+              </td>
+              <td>
+                <div [class]="'badge ' + configStatusPayment[item.paymentStatus].color">
+                  {{ configStatusPayment[item.paymentStatus].descriptionEs }}
+                </div>
+              </td>
+              <td>{{ item.paymentMethod }}</td>
+              <td>
+                <p class="text-blue-600">
+                  {{ item.cumulativePayment }}
+                </p>
+              </td>
+              <td>
+                <p class="text-red-600">
+                  {{ item.remainingBalanceTotalAmount }}
+                </p>
+              </td>
+              <td>
+                <b>
+                  {{ item.totalAmount }}
+                </b>
+              </td>
+              <td>
+                {{ item.updatedAt | date: 'dd/MM/yyyy hh:mm a' }}
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</app-layout-section>
+
+<dialog id="collection_details_modal" class="modal modal-bottom sm:modal-middle">
+  <div class="modal-box">
+    @if (isLoadingCollectionModal()) {
+      <span class="loading loading-spinner loading-xl"></span>
+    } @else {
+      <h3 class="font-bold text-lg border-b pb-2 flex justify-between">
+        <span>Historial de pagos</span>
+        <!-- <span class="badge badge-ghost">ID: {{ selectedOrder()?.id?.slice(0, 8) }}</span> -->
+      </h3>
+
+      <div class="py-4">
+        <div class="overflow-x-auto bg-base-100 rounded-lg">
+          <div class="overflow-x-auto bg-base-100 rounded-lg border">
+            <table class="table table-zebra w-full">
+              <thead>
+                <tr class="bg-base-300">
+                  <th class="text-center">Estado</th>
+                  <th class="text-center">Método</th>
+                  <th class="text-center">Acumulado (S/)</th>
+                  <th class="text-center">Restante (S/)</th>
+                  <th class="text-center">Total (S/)</th>
+                  <th class="text-center">Fecha</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of dataGridCollection(); track item.id) {
+                  <tr>
+                    <td>
+                      <div [class]="'badge ' + configStatusPayment[item.paymentStatus].color">
+                        {{ configStatusPayment[item.paymentStatus].descriptionEs }}
+                      </div>
+                    </td>
+                    <td>{{ item.paymentMethod }}</td>
+                    <td>{{ item.clientAccumulatedAmount }}</td>
+                    <td>{{ item.remainingBalanceTotalOrderAmount }}</td>
+                    <td>{{ item.totalOrderAmount }}</td>
+                    <td>{{ item.createdAt | date: 'dd/MM/yyyy hh:mm a' }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    }
+
+    <div class="modal-action">
+      <form method="dialog">
+        <button
+          class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+          (click)="closeModal()"
+        >
+          ✕
+        </button>
+
+        <button class="btn btn-soft btn-primary" (click)="closeModal()">Cerrar</button>
+      </form>
+    </div>
+  </div>
+
+  <form method="dialog" class="modal-backdrop">
+    <button (click)="closeModal()">close</button>
+  </form>
+</dialog>

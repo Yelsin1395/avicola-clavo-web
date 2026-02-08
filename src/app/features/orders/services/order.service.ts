@@ -2,8 +2,13 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { CreateOrderRequest, SearchOrderRequest } from '../models/in/order.in';
-import { CreateOrderResponse, SearchOrderResponse } from '../models/out/order.out';
+import {
+  CreateOrderResponse,
+  FindAllByClientResponse,
+  SearchOrderResponse,
+} from '../models/out/order.out';
 import { OrderStatus } from '../models/interfaces/orderStatus.interface';
+import { PaymentStatus } from '../models/interfaces/paymentStatus.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -19,6 +24,12 @@ export class OrderService {
     return this.http.get<SearchOrderResponse>(
       `/orders/search?skip=${filter.skip}&take=${filter.take}${conditions.length ? `&${conditions.join('&')}` : ''}`,
     );
+  }
+
+  findAllByClient(clientId: string, paymentStatus: PaymentStatus): Observable<FindAllByClientResponse> {
+    return this.http
+      .get<FindAllByClientResponse>(`/orders/list/${paymentStatus}/${clientId}`)
+      .pipe(map((response) => response));
   }
 
   create(input: CreateOrderRequest): Observable<CreateOrderResponse> {

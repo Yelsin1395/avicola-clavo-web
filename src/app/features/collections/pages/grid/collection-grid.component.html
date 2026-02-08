@@ -2,15 +2,13 @@
   <div class="hero bg-base-200 rounded-box">
     <div class="hero-content flex-col lg:flex-row py-10">
       <div class="text-center md:text-left">
-        <h1 class="text-3xl font-bold">Gestion de clientes</h1>
+        <h1 class="text-3xl font-bold">Gestion de pagos</h1>
         <p class="py-4">
-          Administrar tu catálogo de clientes, pedidos y cobranzas, realiza el seguimiento detallado
-          de abonos y saldos por pedido.
+          Administra tus clientes y pedidos. Consulta sus saldos y registra sus abonos al instante
+          para mantener tu historial siempre actualizado.
         </p>
       </div>
-      <div class="w-full text-center md:text-right">
-        <a class="btn btn-primary btn-wide" routerLink="/console/clients/create">Crear cliente</a>
-      </div>
+      <div class="w-full text-center md:text-right"></div>
     </div>
   </div>
 
@@ -40,7 +38,7 @@
         class="absolute inset-0 z-10 flex flex-col items-center justify-center bg-base-200/50 backdrop-blur-[1px] rounded-box"
       >
         <span class="loading loading-spinner loading-lg text-neutral"></span>
-        <p class="mt-2 font-medium text-neutral">Cargando clientes</p>
+        <p class="mt-2 font-medium text-neutral">Cargando pagos</p>
       </div>
     }
 
@@ -49,8 +47,11 @@
         <thead>
           <tr>
             <th></th>
-            <th>Nombres</th>
-            <th>Etiqueta</th>
+            <th>Cliente</th>
+            <th>Estado de pago</th>
+            <th>Saldo actual</th>
+            <th>Pedidos por pagar</th>
+            <th>Última orden</th>
             <th>Acciones</th>
           </tr>
         </thead>
@@ -64,23 +65,21 @@
                   </div>
                 </th>
                 <td>{{ item.fullName }}</td>
-                <td>{{ item.label }}</td>
+                <td>
+                  <div [class]="'badge ' + configStatusPayment[item.currentPaymentStatus].color">
+                    {{ configStatusPayment[item.currentPaymentStatus].descriptionEs }}
+                  </div>
+                </td>
+                <td>{{ item.currentBalance }}</td>
+                <td>{{ item.pendingOrdersPayments }}</td>
+                <td>{{ item.lastOrderDate | date: 'dd/MM/yyyy hh:mm a' }}</td>
                 <th>
                   <div class="flex flex-row gap-2 justify-center">
                     <button
-                      class="btn btn-soft btn-primary btn-sm"
-                      [routerLink]="['/console/orders/create', item.id]"
+                      class="btn btn-primary btn-sm"
+                      [routerLink]="['/console/collections/tracking', item.id]"
                     >
-                      <ng-icon name="cssList" />
-                    </button>
-                    <button
-                      class="btn btn-soft btn-warning btn-sm"
-                      [routerLink]="['/console/clients/edit', item.id]"
-                    >
-                      <ng-icon name="cssPen" />
-                    </button>
-                    <button class="btn btn-soft btn-error btn-sm" (click)="onDelete(item.id!)">
-                      <ng-icon name="cssTrash" />
+                      <ng-icon name="cssEye" />
                     </button>
                   </div>
                 </th>
@@ -88,7 +87,7 @@
             }
           } @else {
             <tr>
-              <td colspan="4">
+              <td colspan="6">
                 <div class="hero bg-base-200 min-h-screen">
                   <div class="hero-content text-center">
                     <div class="max-w-md">
@@ -108,12 +107,8 @@
         <!-- foot -->
         <tfoot class="text-center">
           <tr>
-            <td colspan="4">
+            <td colspan="6">
               <div class="join">
-                <!-- <button class="join-item btn">1</button>
-                <button class="join-item btn btn-active">2</button>
-                <button class="join-item btn">3</button>
-                <button class="join-item btn">4</button> -->
                 <button
                   class="join-item btn"
                   [disabled]="currentPage() === 1"

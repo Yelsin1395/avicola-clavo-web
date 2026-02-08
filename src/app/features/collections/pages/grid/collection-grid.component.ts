@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, DestroyRef, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
@@ -6,17 +7,18 @@ import { Client } from '@features/clients/models/entity/client.entity';
 import { SearchClientRequest } from '@features/clients/models/in/client.in';
 import { CONFIG_STATUS_PAYMENT } from '@features/clients/models/interfaces/paymentStatusClient.interface';
 import { ClientService } from '@features/clients/services/client.service';
+import { Order } from '@features/orders/models/entity/order.entity';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { cssTrash, cssPen, cssList } from '@ng-icons/css.gg';
+import { cssList, cssPen, cssEye } from '@ng-icons/css.gg';
 import { finalize } from 'rxjs';
 
 @Component({
-  selector: 'app-client-grid.component',
-  templateUrl: './client-grid.component.html',
-  imports: [SectionComponent, RouterLink, NgIcon],
-  viewProviders: [provideIcons({ cssTrash, cssPen, cssList })],
+  selector: 'app-collection-grid.component',
+  templateUrl: './collection-grid.component.html',
+  imports: [SectionComponent, RouterLink, NgIcon, DatePipe],
+  viewProviders: [provideIcons({ cssPen, cssList, cssEye })],
 })
-export class ClientGridComponent {
+export class CollectionGridComponent {
   private readonly clientService = inject(ClientService);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -28,6 +30,10 @@ export class ClientGridComponent {
   searchFullName = signal('');
   currentPage = signal(1);
   pageSize = signal(30);
+
+  clientNameHead = signal<string>('');
+  dataGridOrders = signal<Order[]>([]);
+  isLoadingModal = signal(false);
 
   configStatusPayment = CONFIG_STATUS_PAYMENT;
 
@@ -59,7 +65,7 @@ export class ClientGridComponent {
           this.totalPages.set(response.data.totalPages);
         },
         error: () => {
-          this.dataGrid.set([]);
+          this.isLoading.set(false);
         },
       });
   }
@@ -80,15 +86,5 @@ export class ClientGridComponent {
 
     this.searchFullName.set('');
     this.currentPage.set(1);
-  }
-
-  onDelete(id: string): void {
-    this.clientService
-      .delete(id)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => {
-        const updatedData = this.dataGrid().filter((client) => client.id !== id);
-        this.dataGrid.set(updatedData);
-      });
   }
 }

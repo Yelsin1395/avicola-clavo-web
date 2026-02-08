@@ -1,6 +1,6 @@
-import { OrderStatus } from "../interfaces/orderStatus.interface";
-import { PaymentMethod } from "../interfaces/paymentMethod.interface";
-import { PaymentStatus } from "../interfaces/paymentStatus.interface";
+import { OrderStatus } from '../interfaces/orderStatus.interface';
+import { PaymentMethod } from '../interfaces/paymentMethod.interface';
+import { PaymentStatus } from '../interfaces/paymentStatus.interface';
 
 interface OrderItem {
   id: string;
@@ -19,7 +19,9 @@ export interface Order {
   paymentMethod?: PaymentMethod;
   paymentStatus: PaymentStatus;
   items: OrderItem[];
+  cumulativePayment?: number;
+  remainingBalanceTotalAmount?: number;
   totalAmount: number;
-  createdAt: Date
+  createdAt: Date;
   updatedAt: Date;
 }
