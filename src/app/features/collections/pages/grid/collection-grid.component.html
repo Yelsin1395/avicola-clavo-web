@@ -23,8 +23,16 @@
             placeholder="Nombre del cliente"
             (keyup.enter)="onSearch(searchInput.value)"
           />
-          <button class="btn btn-secondary join-item" (click)="onSearch(searchInput.value)">
-            Buscar
+          <button
+            class="btn btn-secondary join-item"
+            (click)="onSearch(searchInput.value)"
+            [disabled]="isSearchLoading()"
+          >
+            @if (isSearchLoading()) {
+              <span class="loading loading-spinner loading-xs"></span>
+            } @else {
+              Buscar
+            }
           </button>
           <button class="btn btn-soft join-item" (click)="onClear(searchInput)">Limpiar</button>
         </div>
@@ -87,7 +95,7 @@
             }
           } @else {
             <tr>
-              <td colspan="6">
+              <td colspan="7">
                 <div class="hero bg-base-200 min-h-screen">
                   <div class="hero-content text-center">
                     <div class="max-w-md">
@@ -107,7 +115,7 @@
         <!-- foot -->
         <tfoot class="text-center">
           <tr>
-            <td colspan="6">
+            <td colspan="7">
               <div class="join">
                 <button
                   class="join-item btn"

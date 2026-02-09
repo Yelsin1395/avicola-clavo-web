@@ -25,8 +25,16 @@
             placeholder="Nombre del cliente"
             (keyup.enter)="onSearch(searchInput.value)"
           />
-          <button class="btn btn-secondary join-item" (click)="onSearch(searchInput.value)">
-            Buscar
+          <button
+            class="btn btn-secondary join-item"
+            (click)="onSearch(searchInput.value)"
+            [disabled]="isSearchLoading()"
+          >
+            @if (isSearchLoading()) {
+              <span class="loading loading-spinner loading-xs"></span>
+            } @else {
+              Buscar
+            }
           </button>
           <button class="btn btn-soft join-item" (click)="onClear(searchInput)">Limpiar</button>
         </div>

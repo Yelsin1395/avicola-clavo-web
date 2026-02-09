@@ -26,7 +26,7 @@ export class CollectionService {
 
   paymentOnAccount(input: PaymentCollectionRequest): Observable<CreateCollectionResponse> {
     return this.http
-      .post<CreateCollectionResponse>(`collections/payment-on-account/${input.orderId}`, {
+      .post<CreateCollectionResponse>(`/collections/payment-on-account/${input.orderId}`, {
         paymentMethod: input.paymentMethod,
         clientPaymentAmount: input.clientPaymentAmount,
       })

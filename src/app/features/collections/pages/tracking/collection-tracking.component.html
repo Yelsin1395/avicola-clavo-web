@@ -99,6 +99,15 @@
               <td>
                 {{ item.updatedAt | date: 'dd/MM/yyyy hh:mm a' }}
               </td>
+              <td>
+                <div class="flex flex-row gap-2 justify-center">
+                  @if (currentOrderPaymentStatus() === PaymentStatus.PENDING) {
+                    <button class="btn btn-neutral btn-sm" (click)="showTrackingModal(item.id)">
+                      <ng-icon name="cssCreditCard" />
+                    </button>
+                  }
+                </div>
+              </td>
             </tr>
           }
         </tbody>
@@ -114,7 +123,6 @@
     } @else {
       <h3 class="font-bold text-lg border-b pb-2 flex justify-between">
         <span>Historial de pagos</span>
-        <!-- <span class="badge badge-ghost">ID: {{ selectedOrder()?.id?.slice(0, 8) }}</span> -->
       </h3>
 
       <div class="py-4">
@@ -170,4 +178,64 @@
   <form method="dialog" class="modal-backdrop">
     <button (click)="closeModal()">close</button>
   </form>
+</dialog>
+
+<dialog id="tracking_payment_modal" class="modal modal-bottom sm:modal-middle">
+  <div class="modal-box">
+    <form [formGroup]="paymentForm" (ngSubmit)="onSubmitPayment()">
+      <fieldset class="fieldset bg-base-200 border-base-300 rounded-box border p-4 w-full">
+        <legend class="fieldset-legend">Registrar pago</legend>
+
+        <label class="label">Forma de pago</label>
+        <select class="select w-full" formControlName="paymentType">
+          <option value="" disabled selected>Seleccione forma</option>
+          <option value="COMPLETE">Completo</option>
+          <option value="ACCUMULATIVE">Acumulativo</option>
+        </select>
+
+        <label class="label">Método de pago</label>
+        <select class="select w-full" formControlName="paymentMethod">
+          <option value="" disabled selected>Seleccione método</option>
+          @for (method of paymentMethods; track method) {
+            <option [value]="method">{{ method }}</option>
+          }
+        </select>
+
+        @if (paymentType?.value === 'ACCUMULATIVE') {
+          <label class="label">Monto</label>
+          <input
+            type="number"
+            class="input w-full"
+            placeholder="Ingrese monto"
+            formControlName="clientPaymentAmount"
+          />
+        }
+      </fieldset>
+
+      <div class="modal-action">
+        <button type="button" class="btn btn-soft btn-error mx-4" (click)="closeTrackinModal()">
+          Cancelar
+        </button>
+
+        <button
+          type="submit"
+          class="btn btn-soft btn-primary"
+          [disabled]="paymentForm.invalid || isLoadinCollectionTracking()"
+        >
+          @if (isLoadinCollectionTracking()) {
+            <span class="loading loading-spinner loading-xs"></span>
+          } @else {
+            Guardar
+          }
+        </button>
+      </div>
+    </form>
+
+    <button
+      class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+      (click)="closeTrackinModal()"
+    >
+      ✕
+    </button>
+  </div>
 </dialog>

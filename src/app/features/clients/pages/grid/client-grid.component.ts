@@ -26,6 +26,7 @@ export class ClientGridComponent {
   totalPages = signal(0);
 
   searchFullName = signal('');
+  isSearchLoading = signal(false);
   currentPage = signal(1);
   pageSize = signal(30);
 
@@ -49,6 +50,7 @@ export class ClientGridComponent {
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         finalize(() => {
+          this.isSearchLoading.set(false);
           this.isLoading.set(false);
         }),
       )
@@ -65,6 +67,7 @@ export class ClientGridComponent {
   }
 
   onSearch(term: string): void {
+    this.isSearchLoading.set(true);
     this.searchFullName.set(term);
     this.currentPage.set(1);
   }
@@ -76,6 +79,10 @@ export class ClientGridComponent {
   }
 
   onClear(inputElement: HTMLInputElement): void {
+    if (this.searchFullName().length) {
+      this.isSearchLoading.set(true);
+    }
+    
     inputElement.value = '';
 
     this.searchFullName.set('');
