@@ -2,6 +2,7 @@ import { DatePipe } from '@angular/common';
 import { Component, DestroyRef, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SectionComponent } from '@core/layout/section.component';
+import { ErrorResponse } from '@core/models/errorResponse.model';
 import { SearchOrderRequest } from '@features/orders/models/in/order.in';
 import {
   ORDER_STATUS_CONFIG,
@@ -10,8 +11,11 @@ import {
 import { PAYMENT_STATUS_CONFIG } from '@features/orders/models/interfaces/paymentStatus.interface';
 import { OrderItems } from '@features/orders/models/out/order.out';
 import { OrderService } from '@features/orders/services/order.service';
+import { PrinterService } from '@features/printer/services/printer.service';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { cssPrinter } from '@ng-icons/css.gg';
+import { HotToastService } from '@ngxpert/hot-toast';
+import { getErrorDescription } from '@shared/utils/catalogException.utils';
 import { finalize } from 'rxjs';
 
 @Component({
@@ -22,7 +26,10 @@ import { finalize } from 'rxjs';
 })
 export class OrderGridComponent {
   private readonly orderService = inject(OrderService);
+  private readonly printerService = inject(PrinterService);
   private readonly destroyRef = inject(DestroyRef);
+
+  private toast = inject(HotToastService);
 
   dataGrid = signal<OrderItems[]>([]);
   isLoading = signal(false);
@@ -35,6 +42,8 @@ export class OrderGridComponent {
 
   currentStatus = signal<OrderStatus>(OrderStatus.PENDING);
   selectedOrder = signal<OrderItems | null>(null);
+
+  isLoadingPrinter = signal<boolean>(false);
 
   configStatusOrder = ORDER_STATUS_CONFIG;
   configStatusPayment = PAYMENT_STATUS_CONFIG;
@@ -119,5 +128,24 @@ export class OrderGridComponent {
 
   isOrderLoading(orderId: string): boolean {
     return this.loadingOrderId() === orderId;
+  }
+
+  onPrinter(orderId: string): void {
+    this.isLoadingPrinter.set(true);
+
+    this.printerService
+      .generateTicketOrder(orderId)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.isLoadingPrinter.set(false)),
+      )
+      .subscribe({
+        next: (value) => {
+          console.log({ value });
+        },
+        error: (error: ErrorResponse) => {
+          this.toast.error(getErrorDescription(error?.errorCode));
+        },
+      });
   }
 }

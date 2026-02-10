@@ -12,11 +12,11 @@ export const UnitsMeasurementMap = {
   UNIDAD: 'UND',
   DECENA: 'DEC',
   DOCENA: 'DOC',
-  CUARTO_CENTENA: '25',
-  MEDIO_CENTENA: '50',
+  CUARTO_CENTENA: '1/4_CEN',
+  MEDIO_CENTENA: '1/2_CEN',
   CENTENA: 'CEN',
-  CUARTO_MILLAR: '250_MIL',
-  MEDIO_MILLAR: '500_MIL',
+  CUARTO_MILLAR: '1/4_MIL',
+  MEDIO_MILLAR: '1/2_MIL',
   MILLAR: 'MIL',
 
   // Empaque y Logística
@@ -27,7 +27,9 @@ export const UnitsMeasurementMap = {
   PAQUETE: 'PQT',
 };
 
-export const UnitsMeasurementNames = Object.keys(UnitsMeasurementMap) as Array<keyof typeof UnitsMeasurementMap>;
+export const UnitsMeasurementNames = Object.keys(UnitsMeasurementMap) as Array<
+  keyof typeof UnitsMeasurementMap
+>;
 
 export type UnitsMeasurementName = keyof typeof UnitsMeasurementMap;
 export type UnitsMeasurementCode = (typeof UnitsMeasurementMap)[UnitsMeasurementName];

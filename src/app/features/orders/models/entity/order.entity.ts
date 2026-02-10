@@ -7,6 +7,8 @@ interface OrderItem {
   orderId: string;
   productId: string;
   productName: string;
+  productUnitsMeasurementCode?: string;
+  productUnitsMeasurementName?: string;
   quantity: number;
   priceAtPurchase: number;
   subTotal: number;

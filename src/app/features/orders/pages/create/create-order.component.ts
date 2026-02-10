@@ -91,6 +91,8 @@ export class CreateOrderComponent implements OnInit {
       const orderItem = {
         productId: item.id,
         productName: item.name,
+        productUnitsMeasurementCode: item.unitsMeasurementCode,
+        productUnitsMeasurementName: item.unitsMeasurementName,
         priceAtPurchase: item.price,
         quantity: 1,
         subTotal: Math.round(item.price * 100) / 100,

@@ -11,6 +11,8 @@ export interface SearchOrderRequest {
 export interface OrderItemRequest {
   productId: string;
   productName: string;
+  productUnitsMeasurementCode?: string;
+  productUnitsMeasurementName?: string;
   priceAtPurchase: number;
   quantity: number;
   subTotal: number;

@@ -203,7 +203,17 @@
           <div>
             <p class="opacity-60">Acciones</p>
             <div>
-              <button class="btn btn-accent btn-sm"><ng-icon name="cssPrinter" />Imprimir</button>
+              <button
+                class="btn btn-accent btn-sm"
+                (click)="onPrinter(order.id)"
+                [disabled]="isLoadingPrinter()"
+              >
+                @if (isLoadingPrinter()) {
+                  <span class="loading loading-spinner loading-xs"></span>
+                } @else {
+                  <ng-icon name="cssPrinter" />Imprimir
+                }
+              </button>
             </div>
           </div>
           <div>
@@ -218,6 +228,7 @@
               <tr class="bg-base-300">
                 <th>Producto</th>
                 <th class="text-center">Cant.</th>
+                <th class="text-center">UM</th>
                 <th class="text-right">Precio Unit.</th>
                 <th class="text-right">Subtotal</th>
               </tr>
@@ -227,6 +238,7 @@
                 <tr>
                   <td>{{ item.productName }}</td>
                   <td class="text-center">{{ item.quantity }}</td>
+                  <td class="text-center">{{ item.productUnitsMeasurementCode }}</td>
                   <td class="text-right">S/ {{ item.priceAtPurchase }}</td>
                   <td class="text-right font-medium">S/ {{ item.subTotal }}</td>
                 </tr>
@@ -234,7 +246,7 @@
             </tbody>
             <tfoot>
               <tr class="text-md">
-                <td colspan="3" class="text-right font-bold uppercase">Total</td>
+                <td colspan="4" class="text-right font-bold uppercase">Total</td>
                 <td class="text-right font-bold text-primary text-lg">
                   S/ {{ order.totalAmount }}
                 </td>

@@ -5,6 +5,7 @@ export enum CatalogCode {
   ERR_TERMS_AND_CONDITIONS = 'ERR_TERMS_AND_CONDITIONS',
   ERR_COMPANY_NOT_FOUND_SUNAT = 'ERR_COMPANY_NOT_FOUND_SUNAT',
   ERR_STORE_LEGAL_REPRESENTATIVE_INVALID = 'ERR_STORE_LEGAL_REPRESENTATIVE_INVALID',
+  ERROR_PRINTER_NOT_CONNECTION_400 = 'ERROR_PRINTER_NOT_CONNECTION_400',
 }
 
 type CatalogStrings = keyof typeof CatalogCode;
@@ -32,6 +33,10 @@ export function getErrorDescription(key: CatalogStrings | any) {
 
   if (key === CatalogCode.ERR_STORE_LEGAL_REPRESENTATIVE_INVALID) {
     return 'El representate legal <b>no corresponde con el negocio</b>';
+  }
+
+  if (key === CatalogCode.ERROR_PRINTER_NOT_CONNECTION_400) {
+    return 'Impresora térmica <b>fuera de línea</b>';
   }
 
   return 'Algo no salió como esperábamos';

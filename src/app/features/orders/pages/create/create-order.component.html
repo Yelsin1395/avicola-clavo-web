@@ -76,6 +76,7 @@
                 <th></th>
                 <th>Producto</th>
                 <th>Precio (S/)</th>
+                <th>UM</th>
                 <th>Cantidad</th>
                 <th>Subtotal</th>
                 <th>Acciones</th>
@@ -87,6 +88,7 @@
                   <th>{{ index + 1 }}</th>
                   <td>{{ item.productName }}</td>
                   <td>{{ item.priceAtPurchase }}</td>
+                  <td>{{ item.productUnitsMeasurementCode }}</td>
                   <td>
                     <input
                       type="number"
@@ -110,6 +112,7 @@
             </tbody>
             <tfoot>
               <tr>
+                <th></th>
                 <th></th>
                 <th></th>
                 <th></th>
