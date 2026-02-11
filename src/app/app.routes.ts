@@ -11,6 +11,8 @@ import { OrderGridComponent } from '@features/orders/pages/grid/order-grid.compo
 import { CreateOrderComponent } from '@features/orders/pages/create/create-order.component';
 import { CollectionGridComponent } from '@features/collections/pages/grid/collection-grid.component';
 import { CollectionTrackingComponent } from '@features/collections/pages/tracking/collection-tracking.component';
+import { SaleGridComponent } from '@features/sales/pages/grid/sale-grid.component';
+import { CreateSaleComponent } from '@features/sales/pages/create/create-sale.component';
 
 export const routes: Routes = [
   {
@@ -54,6 +56,13 @@ export const routes: Routes = [
         children: [
           { path: '', component: CollectionGridComponent },
           { path: 'tracking/:clientId', component: CollectionTrackingComponent },
+        ],
+      },
+      {
+        path: 'sales',
+        children: [
+          { path: '', component: SaleGridComponent },
+          { path: 'create', component: CreateSaleComponent },
         ],
       },
     ],

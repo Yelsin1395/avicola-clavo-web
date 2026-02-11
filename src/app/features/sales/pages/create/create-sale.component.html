@@ -2,7 +2,7 @@
   <div class="overflow flex bg-base-200 rounded-box">
     <div class="py-10 px-5">
       <div class="text-left">
-        <h1 class="text-3xl font-bold">Crear pedido</h1>
+        <h1 class="text-3xl font-bold">Crear venta</h1>
       </div>
     </div>
   </div>
@@ -128,27 +128,15 @@
       <fieldset class="fieldset rounded-box border p-4 mb-3 w-xs md:w-2xl grid grid-cols-1 gap-2">
         <legend class="fieldset-legend px-2">Configuración de pago</legend>
 
-        <div class="flex items-center gap-2">
-          <input
-            type="checkbox"
-            class="checkbox checkbox-primary"
-            [value]="isEarlyPayment"
-            [formControl]="isEarlyPayment"
-          />
-          <span class="label-text">Pagó por adelantado</span>
-        </div>
-
-        @if (isEarlyPayment.value) {
-          <fieldset class="fieldset">
-            <legend class="fieldset-legend">Método de Pago</legend>
-            <select class="select w-full" [formControl]="paymentMethodControl">
-              <option disabled selected value="">Seleccione el método de pago</option>
-              @for (method of paymentMethodsList; track $index) {
-                <option [value]="method">{{ method }}</option>
-              }
-            </select>
-          </fieldset>
-        }
+        <fieldset class="fieldset">
+          <legend class="fieldset-legend">Método de Pago</legend>
+          <select class="select w-full" [formControl]="paymentMethodControl">
+            <option disabled selected value="">Seleccione el método de pago</option>
+            @for (method of paymentMethodsList; track $index) {
+              <option [value]="method">{{ method }}</option>
+            }
+          </select>
+        </fieldset>
       </fieldset>
 
       <fieldset
@@ -160,16 +148,16 @@
           <button
             class="btn btn-primary md:btn-wide"
             type="submit"
-            [disabled]="isLoadingCreateOrder()"
+            [disabled]="isLoadingCreateSale()"
           >
-            @if (isLoadingCreateOrder()) {
+            @if (isLoadingCreateSale()) {
               <span class="loading loading-spinner loading-xs"></span>
             } @else {
               Guardar
             }
           </button>
           <button
-            routerLink="/console/clients"
+            routerLink="/console/sales"
             class="btn btn-soft md:btn-wide text-red-500"
             type="button"
           >

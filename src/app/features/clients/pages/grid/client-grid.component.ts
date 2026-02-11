@@ -82,7 +82,7 @@ export class ClientGridComponent {
     if (this.searchFullName().length) {
       this.isSearchLoading.set(true);
     }
-    
+
     inputElement.value = '';
 
     this.searchFullName.set('');

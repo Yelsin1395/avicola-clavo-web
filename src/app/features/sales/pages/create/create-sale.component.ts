@@ -1,39 +1,37 @@
-import { Component, computed, DestroyRef, effect, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { SectionComponent } from '@core/layout/section.component';
-import { CreateOrderRequest, OrderItemRequest } from '@features/orders/models/in/order.in';
+import { ErrorResponse } from '@core/models/errorResponse.model';
+import { PaymentMethod } from '@features/orders/models/interfaces/paymentMethod.interface';
 import { Product } from '@features/products/models/entity/product.entity';
 import { ProductService } from '@features/products/services/product.service';
+import { CreateSaleRequest, SaleItemRequest } from '@features/sales/models/in/sale.in';
+import { SaleService } from '@features/sales/services/sale.service';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { debounceTime, distinctUntilChanged, finalize } from 'rxjs';
 import { cssTrash } from '@ng-icons/css.gg';
-import { PaymentMethod } from '@features/orders/models/interfaces/paymentMethod.interface';
-import { OrderService } from '@features/orders/services/order.service';
-import { ErrorResponse } from '@core/models/errorResponse.model';
+import { debounceTime, distinctUntilChanged, finalize } from 'rxjs';
 
 @Component({
-  selector: 'app-create-order.component',
-  templateUrl: './create-order.component.html',
-  imports: [SectionComponent, NgIcon, FormsModule, ReactiveFormsModule, RouterLink],
+  selector: 'app-create-sale.component',
+  templateUrl: './create-sale.component.html',
+  imports: [SectionComponent, FormsModule, ReactiveFormsModule, NgIcon, RouterLink],
   viewProviders: [provideIcons({ cssTrash })],
 })
-export class CreateOrderComponent implements OnInit {
+export class CreateSaleComponent {
   private readonly productService = inject(ProductService);
-  private readonly route = inject(ActivatedRoute);
+  private readonly saleService = inject(SaleService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
-  clientId = signal<string | null>(null);
   searchResults = signal<Product[]>([]);
-  selectedItems = signal<OrderItemRequest[]>([]);
+  selectedItems = signal<SaleItemRequest[]>([]);
   isLoading = signal<boolean>(false);
 
   searchControl = new FormControl('');
-  isEarlyPayment = new FormControl(false, { nonNullable: true });
   paymentMethodControl = new FormControl('');
-  isLoadingCreateOrder = signal<boolean>(false);
+  isLoadingCreateSale = signal<boolean>(false);
 
   paymentMethodsList = Object.values(PaymentMethod);
 
@@ -42,7 +40,7 @@ export class CreateOrderComponent implements OnInit {
     { initialValue: '' },
   );
 
-  constructor(private readonly orderService: OrderService) {
+  constructor() {
     effect(() => {
       const term = this.searchTerm();
 
@@ -52,10 +50,6 @@ export class CreateOrderComponent implements OnInit {
         this.searchResults.set([]);
       }
     });
-  }
-
-  ngOnInit(): void {
-    this.clientId.set(this.route.snapshot.paramMap.get('id'));
   }
 
   totalPriceItems = computed(() => {
@@ -89,7 +83,7 @@ export class CreateOrderComponent implements OnInit {
     const existingItem = this.selectedItems().find((i) => i.productId === item.id);
 
     if (!existingItem) {
-      const orderItem = {
+      const saleItem = {
         productId: item.id,
         productName: item.name,
         productUnitsMeasurementCode: item.unitsMeasurementCode,
@@ -97,9 +91,9 @@ export class CreateOrderComponent implements OnInit {
         priceAtPurchase: item.price,
         quantity: 1,
         subTotal: Math.round(item.price * 100) / 100,
-      } as OrderItemRequest;
+      } as SaleItemRequest;
 
-      this.selectedItems.update((items) => [...items, orderItem]);
+      this.selectedItems.update((items) => [...items, saleItem]);
     }
 
     this.searchControl.setValue('');
@@ -125,24 +119,22 @@ export class CreateOrderComponent implements OnInit {
   }
 
   submitForm(): void {
-    this.isLoadingCreateOrder.set(true);
+    this.isLoadingCreateSale.set(true);
 
     const payload = {
-      clientId: this.clientId(),
-      isPendingPayment: !this.isEarlyPayment.value,
       paymentMethod: this.paymentMethodControl.value || null,
       items: this.selectedItems(),
       totalAmount: this.totalPriceItems(),
-    } as CreateOrderRequest;
+    } as CreateSaleRequest;
 
-    this.orderService
+    this.saleService
       .create(payload)
       .pipe(
         takeUntilDestroyed(this.destroyRef),
-        finalize(() => this.isLoadingCreateOrder.set(false)),
+        finalize(() => this.isLoadingCreateSale.set(false)),
       )
       .subscribe({
-        next: () => void this.router.navigate(['/console/clients']),
+        next: () => void this.router.navigate(['/console/sales']),
         error: (error: ErrorResponse) => console.error(error),
       });
   }

@@ -1,0 +1,6 @@
+export enum RangeDaysEnum {
+  TODAY = 'TODAY',
+  FIFTEEN_DAYS = 'FIFTEEN_DAYS',
+  THIRTY_DAYS = 'THIRTY_DAYS',
+  SIXTY_DAYS = 'SIXTY_DAYS',
+}

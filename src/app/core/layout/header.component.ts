@@ -1,7 +1,15 @@
 import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { cssHome, cssChevronDown, cssCreditCard, cssList, cssMenuHotdog, cssUserList } from '@ng-icons/css.gg';
+import {
+  cssHome,
+  cssChevronDown,
+  cssCreditCard,
+  cssList,
+  cssMenuHotdog,
+  cssUserList,
+  cssDollar,
+} from '@ng-icons/css.gg';
 import { MenuProvider } from '@core/models/menuProvider.model';
 import { IfAuthenticatedDirective } from '@core/directives/if-authenticated.directive';
 import { AuthService } from '@core/auth/services/auth.service';
@@ -10,7 +18,17 @@ import { AuthService } from '@core/auth/services/auth.service';
   selector: 'app-layout-header',
   templateUrl: './header.component.html',
   imports: [RouterLink, RouterLinkActive, IfAuthenticatedDirective, NgIcon],
-  viewProviders: [provideIcons({ cssHome, cssChevronDown, cssCreditCard, cssList, cssMenuHotdog, cssUserList })],
+  viewProviders: [
+    provideIcons({
+      cssHome,
+      cssChevronDown,
+      cssCreditCard,
+      cssList,
+      cssMenuHotdog,
+      cssUserList,
+      cssDollar,
+    }),
+  ],
 })
 export class HeaderComponent {
   constructor(private readonly authService: AuthService) {}
@@ -32,6 +50,12 @@ export class HeaderComponent {
       title: 'Inicio',
       icon: 'cssHome',
       path: '/console',
+      isEnabled: true,
+    },
+    {
+      title: 'Ventas',
+      icon: 'cssDollar',
+      path: '/console/sales',
       isEnabled: true,
     },
     {

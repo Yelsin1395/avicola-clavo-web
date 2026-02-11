@@ -1,0 +1,236 @@
+<app-layout-section>
+  <div class="hero bg-base-200 rounded-box">
+    <div class="hero-content flex-col lg:flex-row py-10">
+      <div class="text-center md:text-left">
+        <h1 class="text-3xl font-bold">Gestion de ventas</h1>
+        <p class="py-4">
+          Administra tus ventas de forma simple y organizada. Lleva el control de tus ventas
+          diarias, haz seguimiento y no pierdas detalle de ningún pago.
+        </p>
+      </div>
+      <div class="w-full text-center md:text-right">
+        <a class="btn btn-primary btn-wide" routerLink="/console/sales/create">Crear venta</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero bg-base-200 rounded-box mt-8 py-6">
+    <div role="tablist" class="tabs tabs-border">
+      <a
+        role="tab"
+        class="tab"
+        [class.tab-active]="currentRangeDays() === RangeDays.TODAY"
+        (click)="changeTabRangeDays(RangeDays.TODAY)"
+      >
+        Hoy
+      </a>
+      <a
+        role="tab"
+        class="tab"
+        [class.tab-active]="currentRangeDays() === RangeDays.TODAY"
+        (click)="changeTabRangeDays(RangeDays.TODAY)"
+        [class.tab-active]="currentRangeDays() === RangeDays.FIFTEEN_DAYS"
+        (click)="changeTabRangeDays(RangeDays.FIFTEEN_DAYS)"
+      >
+        Quincenal
+      </a>
+      <a
+        role="tab"
+        class="tab"
+        [class.tab-active]="currentRangeDays() === RangeDays.THIRTY_DAYS"
+        (click)="changeTabRangeDays(RangeDays.THIRTY_DAYS)"
+      >
+        Mensual
+      </a>
+      <a
+        role="tab"
+        class="tab"
+        [class.tab-active]="currentRangeDays() === RangeDays.SIXTY_DAYS"
+        (click)="changeTabRangeDays(RangeDays.SIXTY_DAYS)"
+      >
+        Bimestral
+      </a>
+    </div>
+  </div>
+
+  <div class="hero bg-base-200 rounded-box mt-8 py-6">
+    @if (isLoading()) {
+      <div
+        class="absolute inset-0 z-10 flex flex-col items-center justify-center bg-base-200/50 backdrop-blur-[1px] rounded-box"
+      >
+        <span class="loading loading-spinner loading-lg text-neutral"></span>
+        <p class="mt-2 font-medium text-neutral">Cargando ventas</p>
+      </div>
+    }
+
+    <div class="overflow-x-auto w-full">
+      <table class="table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Id</th>
+            <th>Estado de venta</th>
+            <th>Estado de pago</th>
+            <th>Método de pago</th>
+            <th>Fecha</th>
+            <th>Total (S/)</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (dataGrid().length) {
+            @for (item of dataGrid(); track item.id) {
+              <tr>
+                <th>
+                  <div class="text-4xl font-thin opacity-30 tabular-nums">
+                    {{ $index + 1 + (currentPage() - 1) * pageSize() }}
+                  </div>
+                </th>
+                <td>
+                  <button
+                    (click)="openModalSaleDetails(item)"
+                    class="link link-primary no-underline hover:underline text-left"
+                  >
+                    {{ item.id.slice(0, 8) }}
+                  </button>
+                </td>
+                <td>
+                  <div [class]="'badge ' + configSaleStatus[item.status].color">
+                    {{ configSaleStatus[item.status].descriptionEs }}
+                  </div>
+                </td>
+                <td>
+                  <div [class]="'badge ' + configStatusPayment[item.paymentStatus].color">
+                    {{ configStatusPayment[item.paymentStatus].descriptionEs }}
+                  </div>
+                </td>
+                <td>{{ item.paymentMethod }}</td>
+                <td>{{ item.createdAt | date: 'dd/MM/yyyy hh:mm a' }}</td>
+                <td>{{ item.totalAmount }}</td>
+              </tr>
+            }
+          } @else {
+            <tr>
+              <td colspan="9">
+                <div class="hero bg-base-200 min-h-screen">
+                  <div class="hero-content text-center">
+                    <div class="max-w-md">
+                      <h1 class="text-5xl font-bold">Ventas</h1>
+                      <p class="py-6">Aún no tiene ventas realizado</p>
+                    </div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+        <tfoot class="text-center">
+          <tr>
+            <td colspan="7">
+              <div class="join">
+                <button
+                  class="join-item btn"
+                  [disabled]="currentPage() === 1"
+                  (click)="changePage(currentPage() - 1)"
+                >
+                  «
+                </button>
+
+                <button class="join-item btn btn-active">
+                  Página {{ currentPage() }} de {{ totalPages() }}
+                </button>
+
+                <button
+                  class="join-item btn"
+                  [disabled]="currentPage() === totalPages()"
+                  (click)="changePage(currentPage() + 1)"
+                >
+                  »
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+</app-layout-section>
+
+<dialog id="sale_details_modal" class="modal modal-bottom sm:modal-middle">
+  <div class="modal-box">
+    <h3 class="font-bold text-lg border-b pb-2 flex justify-between">
+      <span>Detalles del Pedido</span>
+      <span class="badge badge-ghost">ID: {{ selectedSale()?.id?.slice(0, 8) }}</span>
+    </h3>
+
+    @if (selectedSale(); as sale) {
+      <div class="py-4">
+        <div class="grid grid-cols-2 gap-4 mb-4 text-sm">
+          <div>
+            <p class="opacity-60">Acciones</p>
+            <div>
+              <button
+                class="btn btn-accent btn-sm"
+                (click)="onPrinter(sale.id)"
+                [disabled]="isLoadingPrinter()"
+              >
+                @if (isLoadingPrinter()) {
+                  <span class="loading loading-spinner loading-xs"></span>
+                } @else {
+                  <ng-icon name="cssPrinter" />Imprimir
+                }
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto bg-base-100 rounded-lg border">
+          <table class="table table-zebra w-full">
+            <thead>
+              <tr class="bg-base-300">
+                <th>Producto</th>
+                <th class="text-center">Cant.</th>
+                <th class="text-center">UM</th>
+                <th class="text-right">Precio Unit.</th>
+                <th class="text-right">Subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of sale.items; track item.id) {
+                <tr>
+                  <td>{{ item.productName }}</td>
+                  <td class="text-center">{{ item.quantity }}</td>
+                  <td class="text-center">{{ item.productUnitsMeasurementCode }}</td>
+                  <td class="text-right">S/ {{ item.priceAtPurchase }}</td>
+                  <td class="text-right font-medium">S/ {{ item.subTotal }}</td>
+                </tr>
+              }
+            </tbody>
+            <tfoot>
+              <tr class="text-md">
+                <td colspan="4" class="text-right font-bold uppercase">Total</td>
+                <td class="text-right font-bold text-primary text-lg">S/ {{ sale.totalAmount }}</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    }
+
+    <div class="modal-action">
+      <form method="dialog">
+        <button
+          class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+          (click)="closeModal()"
+        >
+          ✕
+        </button>
+
+        <button class="btn btn-soft btn-primary" (click)="closeModal()">Cerrar</button>
+      </form>
+    </div>
+  </div>
+
+  <form method="dialog" class="modal-backdrop">
+    <button (click)="closeModal()">close</button>
+  </form>
+</dialog>
